@@ -16,49 +16,49 @@ import (
 )
 
 
-type nucularWindow struct {
+type fenestraWindow struct {
 	ShowMenu    bool
 	Titlebar    bool
 	Border      bool
 	Resize      bool
 	Movable     bool
 	NoScrollbar bool
-	Minimizable bool
+	//Minimizable bool
 	Close       bool
 
 	HeaderAlign nstyle.HeaderAlign
 
 	// Menu status
-	Mprog int
-	Mslider int
-	Mcheck  bool
-	Prog    int
-	Slider  int
-	Check bool
+	//Mprog int
+	//Mslider int
+	//Mcheck  bool
+	//Prog    int
+	//Slider  int
+	//Check bool
 
 	Theme nstyle.Theme
 }
 
-func newNucularWindow() (nw *nucularWindow) {
-	nw = &nucularWindow{}
-	nw.ShowMenu = true
+func newFenestraWindow() (nw *fenestraWindow) {
+	nw = &fenestraWindow{}
+	nw.ShowMenu = menubar
 	nw.Titlebar = true
-	nw.Border = true
-	nw.Resize = true
-	nw.Movable = true
-	nw.NoScrollbar = false
+	nw.Border = border
+	nw.Resize = resize
+	nw.Movable = move
+	nw.NoScrollbar = scroll
 	nw.Close = true
 
 	nw.HeaderAlign = nstyle.HeaderRight
-	nw.Mprog = 60
-	nw.Mslider = 8
-	nw.Mcheck = true
+	//nw.Mprog = 60
+	//nw.Mslider = 8
+	//nw.Mcheck = true
 
 	return nw
 }
 
 // Master Window
-func (nw *nucularWindow) nucularWindow(w *nucular.Window) {
+func (nw *fenestraWindow) masterWindow(w *nucular.Window) {
 	//keybindings(w)
 	mw := w.Master()
 
@@ -71,14 +71,41 @@ func (nw *nucularWindow) nucularWindow(w *nucular.Window) {
 	w.Label(hea,"CC")
 	//w.Spacing(2)
 	for _,d := range(dat) {
-		if w.TreePush(nucular.TreeTab, d.title, true) {
-			w.Row(20).Dynamic(2)
+		if d.title == "" {
+			for i,_ := range(d.textl){
+				if d.textr[i]==""{
+					w.RowScaled(25).Dynamic(1)
+					w.Label(d.textl[i],"CC")
+				}else if d.textl[i]==""{
+					w.RowScaled(20).Dynamic(2)
+					w.Label("*)", "RC")
+					w.Label(d.textr[i], "LC")
+				}else{
+					w.RowScaled(20).Dynamic(2)
+					w.Label(d.textl[i], "RC")
+					w.Label(d.textr[i], "LC")
+				}
+			}
+		}else if w.TreePush(nucular.TreeTab, d.title, true) {
+			//w.RowScaled(20).Dynamic(2)
 			//w.Row(20).Dynamic(3)
 			//w.Row(20).Static(100)
 			for i,_ := range(d.textl){
-				w.Label(d.textl[i], "RC")
-				w.Label(d.textr[i], "LC")
+			//	w.Label(d.textl[i], "RC")
+			//	w.Label(d.textr[i], "LC")
 				//w.Label("", "LC")
+				if d.textr[i]==""{
+					w.RowScaled(25).Dynamic(1)
+					w.Label(d.textl[i],"CC")
+				}else if d.textl[i]==""{
+					w.RowScaled(20).Dynamic(2)
+					w.Label("*)", "RC")
+					w.Label(d.textr[i], "LC")
+				}else{
+					w.RowScaled(20).Dynamic(2)
+					w.Label(d.textl[i], "RC")
+					w.Label(d.textr[i], "LC")
+				}
 			}
 
 			w.TreePop()
@@ -92,7 +119,7 @@ func (nw *nucularWindow) nucularWindow(w *nucular.Window) {
 }
 
 
-func (nw *nucularWindow) nucularMenubar(w *nucular.Window) {
+func (nw *fenestraWindow) nucularMenubar(w *nucular.Window) {
 	w.MenubarBegin()
 	w.Row(25).Static(45, 70, 45, 70, 70)
 	if w := w.Menu(label.TA("Menu", "CC"), 120, nil); w != nil {
@@ -134,7 +161,7 @@ func (nw *nucularWindow) nucularMenubar(w *nucular.Window) {
 	w.MenubarEnd()
 }
 
-func (nw *nucularWindow) errorPopup(w *nucular.Window) {
+func (nw *fenestraWindow) errorPopup(w *nucular.Window) {
 	w.Row(25).Dynamic(1)
 	w.Label("A terrible error has occured", "LC")
 	w.Row(25).Dynamic(2)
@@ -146,7 +173,7 @@ func (nw *nucularWindow) errorPopup(w *nucular.Window) {
 	}
 }
 
-func (nw *nucularWindow) questionPopup(w *nucular.Window) {
+func (nw *fenestraWindow) questionPopup(w *nucular.Window) {
 	w.Row(25).Dynamic(1)
 	w.Label("Are You Sure?", "LC")
 	w.Row(25).Dynamic(2)
@@ -158,7 +185,7 @@ func (nw *nucularWindow) questionPopup(w *nucular.Window) {
 	}
 }
 
-func (nw *nucularWindow) aboutPopup(w *nucular.Window) {
+func (nw *fenestraWindow) aboutPopup(w *nucular.Window) {
 	w.Row(20).Dynamic(1)
 	w.Label("Fenestra", "LC")
 	w.Row(40).Dynamic(1)
@@ -172,7 +199,7 @@ func (nw *nucularWindow) aboutPopup(w *nucular.Window) {
 	}
 }
 
-func (nw *nucularWindow) showAppAbout(mw nucular.MasterWindow) {
+func (nw *fenestraWindow) showAppAbout(mw nucular.MasterWindow) {
 	var wf nucular.WindowFlags
 
 	if nw.Border {
@@ -196,7 +223,7 @@ func (nw *nucularWindow) showAppAbout(mw nucular.MasterWindow) {
 	mw.PopupOpen("About", wf, rect.Rect{20, 100, 300, 190}, true, nw.aboutPopup)
 }
 
-func (nw *nucularWindow) showQuestion(mw nucular.MasterWindow) {
+func (nw *fenestraWindow) showQuestion(mw nucular.MasterWindow) {
 	var wf nucular.WindowFlags
 
 	if nw.Border {

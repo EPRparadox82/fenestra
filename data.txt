@@ -1,5 +1,13 @@
 ***XMonad Cheatsheet
 
+This Text is not to be seen???
+Und Nochmehr TExt der immer Zentriert wird. Schuamamal wie lange es klappt es sollte vll ein Wrap LAbel sein.
+##NAAASUPER
+Schaumamal ob jetzt der text erkannt wird
+--some list
+  --or some other ideas
+  WTF--naschau
+
 ##Launching and Killing
 <Win> - P		-- Launch Dmenu
 <Win> - S		-- Launch Synergy
