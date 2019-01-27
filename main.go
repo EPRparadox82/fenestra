@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	//"io"
 	"bufio"
 	"strings"
+	"time"
 
 	"github.com/pborman/getopt/v2"
 
@@ -19,9 +21,9 @@ var (
 	theme nstyle.Theme = nstyle.DarkTheme
 	dat []data
 	interArgs []string
-	hea,filename,themestr string
+	hea,filename,themestr,exitbut string
 	help, border, resize, move, scroll, menubar bool
-
+	countd int = 0
 	version string
 	compdate string
 )
@@ -33,20 +35,28 @@ type data struct {
 }
 
 func init() {
-	filename = "none"
+	filename = "example.txt"
+	exitbut = "QUIT"
 	getopt.FlagLong(&border, "no-border", 'b', "Remove Borders")
 	getopt.FlagLong(&resize, "no-resize", 'r', "Prohibit resizing")
 	getopt.FlagLong(&move, "no-translate", 't', "Prohibit window moving")
 	getopt.FlagLong(&scroll, "no-scroll", 's', "Prohibit scrollibars")
 	getopt.FlagLong(&menubar, "no-menu", 'm', "Dont Show Menu")
 	getopt.FlagLong(&scaling, "magnify", 'g', "Magnification level")
+	getopt.FlagLong(&countd, "count-down", 'd', "Set Count down in seconds for auto-quit")
 	getopt.FlagLong(&themestr, "color-theme", 'c', "Specify Theme")
 	getopt.FlagLong(&help, "help", 'h', "Show Program Usage")
 	getopt.FlagLong(&filename, "file", 'f', "The textfile to be parsed and displayed")
+	getopt.FlagLong(&exitbut, "quit-button", 'q', "Label of the Quit Button")
 
 }
 
 func main() {
+	info, err := os.Stdin.Stat()
+	if err != nil {
+		panic(err)
+	}
+
 	getopt.Parse()
 	interArgs = getopt.Args()
 
@@ -55,7 +65,28 @@ func main() {
 	move = !move
 	scroll = !scroll
 	menubar = !menubar
+	fmt.Println(info)
 
+	if info.Mode()&os.ModeCharDevice == os.ModeCharDevice { // || info.Size() <= 0 {
+		fmt.Println("No Piped Content detected.")
+		hea,dat = parseFile(loadFile(filename))
+	}else{
+		hea,dat = parseFile(bufio.NewScanner(os.Stdin))
+
+		/*reader := bufio.NewReader(os.Stdin)
+		var output []rune
+
+		for {
+			input, _, err := reader.ReadRune()
+			if err != nil && err == io.EOF {
+				break
+			}
+			output = append(output, input)
+		}
+		for _,out := range(output) {
+			fmt.Printf("%c\n", out)
+		}*/
+	}
 	if len(interArgs) > 0 {
 		fmt.Println("Args:",interArgs)
 	} else {
@@ -73,7 +104,7 @@ func main() {
 		getopt.Usage()
 		os.Exit(0)
 	}
-	hea,dat = loadfile("data.txt")
+	//hea,dat = loadfile(filename)
 
 	nw := newFenestraWindow()
 	nw.Theme = theme
@@ -83,9 +114,18 @@ func main() {
 	Wnd.Main()
 
 }
-func loadfile(filename string) (head string,out []data){
-	f, _ := os.Open(filename)
-	scanner := bufio.NewScanner(f)
+func loadFile(filename string) (out *bufio.Scanner) {
+	f, err := os.Open(filename)
+	if err != nil {
+		//fmt.Println("Filename",filename,"was not found!")
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	out = bufio.NewScanner(f)
+	return
+}
+func parseFile(in *bufio.Scanner) (head string,out []data){
+	scanner := in
 	title := ""
 	keys := []string{}
 	info := []string{}
