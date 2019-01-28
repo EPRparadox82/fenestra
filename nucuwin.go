@@ -111,9 +111,9 @@ func (nw *fenestraWindow) masterWindow(w *nucular.Window) {
 			w.TreePop()
 		}
 	}
-	w.Row(30).Static(300, 100, 100)
+	w.RowScaled(30).Dynamic(3) //.Static(300, 100, 100)
 	w.Label("", "LC")
-	if w.ButtonText("Exit") {
+	if w.ButtonText(exitbut) {
 		 os.Exit(0)
 	}
 }

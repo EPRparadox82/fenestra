@@ -1,0 +1,31 @@
+***Title
+
+***Additional Titles will override the first
+
+Some Text that is not part of a Category
+All Texts without any seperators will be shown centered. Wrapping is not yet implemented.
+The User should edit newlines
+If he wishes everything to be displayed without scrolling.
+
+##Category Title 1
+Again some Leading Text that describes the category.
+Some Info 		-- Description
+Some Command		-- And its desricption
+	Tabs are	-- Filtered out 
+		Info 	-- 		And description always alligned to center 
+
+##Category Title 2
+Lists			-- 
+			-- Can Be
+			-- Made with
+			-- empty Infos
+As long as no Seperators are present text will be displayed in one Row
+
+##Some Unix Commands
+An example of what Fenestra is intended to show
+
+mkdir <name>		-- Make a Directory called <name>
+rm -r <name>		-- Remove a directory <name> recursivly
+touch <filename>	-- Create an empty file named <filename>
+
+//Comments and Empty Lines are Ignored

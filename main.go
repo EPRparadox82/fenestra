@@ -20,12 +20,13 @@ var (
 	Wnd nucular.MasterWindow
 	theme nstyle.Theme = nstyle.DarkTheme
 	dat []data
-	interArgs []string
+	interArgs,empty []string
 	hea,filename,themestr,exitbut string
 	help, border, resize, move, scroll, menubar bool
 	countd int = 0
 	version string
 	compdate string
+	//timer time.Timer
 )
 
 type data struct {
@@ -35,7 +36,7 @@ type data struct {
 }
 
 func init() {
-	filename = "example.txt"
+	filename = "example.cheat"
 	exitbut = "QUIT"
 	getopt.FlagLong(&border, "no-border", 'b', "Remove Borders")
 	getopt.FlagLong(&resize, "no-resize", 'r', "Prohibit resizing")
@@ -52,6 +53,17 @@ func init() {
 }
 
 func main() {
+
+	//timer := time.NewTimer(time.Second*time.Duration(countd*1000))
+	//defer timer.Stop()
+	go func() {
+		//<-timer.C
+		time.Sleep(time.Duration(countd)*time.Second)
+		if countd>0 {
+			fmt.Println("Timer of",countd,"s has Ended")
+			os.Exit(0)
+		}
+	}()
 	info, err := os.Stdin.Stat()
 	if err != nil {
 		panic(err)
@@ -59,50 +71,43 @@ func main() {
 
 	getopt.Parse()
 	interArgs = getopt.Args()
+	additions := false
 
 	border = !border
 	resize = !resize
 	move = !move
 	scroll = !scroll
 	menubar = !menubar
-	fmt.Println(info)
+	//fmt.Println(info)
 
-	if info.Mode()&os.ModeCharDevice == os.ModeCharDevice { // || info.Size() <= 0 {
-		fmt.Println("No Piped Content detected.")
-		hea,dat = parseFile(loadFile(filename))
-	}else{
-		hea,dat = parseFile(bufio.NewScanner(os.Stdin))
-
-		/*reader := bufio.NewReader(os.Stdin)
-		var output []rune
-
-		for {
-			input, _, err := reader.ReadRune()
-			if err != nil && err == io.EOF {
-				break
-			}
-			output = append(output, input)
-		}
-		for _,out := range(output) {
-			fmt.Printf("%c\n", out)
-		}*/
-	}
 	if len(interArgs) > 0 {
-		fmt.Println("Args:",interArgs)
+		//fmt.Println("Unknown Arguments:",interArgs)
+		additions = true
 	} else {
-		fmt.Println("No Args")
+		/*fmt.Println("No Args")
 		fmt.Println("Border",border)
 		fmt.Println("Resize",resize)
 		fmt.Println("Translate",move)
 		fmt.Println("Scroll",scroll)
 		fmt.Println("Menubar",menubar)
-		fmt.Println("magn",scaling)
+		fmt.Println("magn",scaling)*/
+	}
+	if info.Mode()&os.ModeCharDevice == os.ModeCharDevice {
+		//fmt.Println("No Piped Content detected.")
+		if additions && filename=="example.cheat"{
+			empty = append(empty,"")
+			var one []string
+			txt := strings.TrimPrefix(fmt.Sprintln(interArgs),"[")
+			one = append(one,txt[:len(txt)-2])
+			dat = append(dat,data{"",one,empty})
+		}else{
+			hea,dat = parseFile(loadFile(filename))
+		}
+	}else{
+		hea,dat = parseFile(bufio.NewScanner(os.Stdin))
 	}
 	if help {
-		fmt.Printf("Usage of %s   Version %s:\n  A simple and Customizable Cheatsheet viewer.\n\n", os.Args[0], version)
-
-		getopt.Usage()
-		os.Exit(0)
+		showHelp()
 	}
 	//hea,dat = loadfile(filename)
 
@@ -114,12 +119,23 @@ func main() {
 	Wnd.Main()
 
 }
+func showHelp() {
+	fmt.Printf("Usage of %s   Version %s:\n  A simple and Customizable Cheatsheet viewer.\n  When No Text is piped and no File specified the Parameters\n  will be shown as Text.\n\n", os.Args[0], version)
+
+	getopt.Usage()
+	os.Exit(0)
+}
 func loadFile(filename string) (out *bufio.Scanner) {
 	f, err := os.Open(filename)
 	if err != nil {
+		if filename=="example.cheat" {
+			fmt.Println("Example File cannot be Found")
+			showHelp()
+		}else{
 		//fmt.Println("Filename",filename,"was not found!")
-		fmt.Println(err)
-		os.Exit(1)
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
 	out = bufio.NewScanner(f)
 	return
