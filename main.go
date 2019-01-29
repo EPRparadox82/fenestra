@@ -18,7 +18,7 @@ import (
 var (
 	scaling = 1.1
 	Wnd nucular.MasterWindow
-	theme nstyle.Theme = nstyle.DarkTheme
+	theme nstyle.Theme
 	dat []data
 	interArgs,empty []string
 	hea,filename,themestr,exitbut string
@@ -108,6 +108,23 @@ func main() {
 	}
 	if help {
 		showHelp()
+	}
+	if themestr != "" {
+		switch themestr {
+			case "Dark":
+				theme = nstyle.DarkTheme
+			case "Default":
+				theme = nstyle.DefaultTheme
+			case "Red":
+				theme = nstyle.RedTheme
+			case "White":
+				theme = nstyle.WhiteTheme
+			default:
+				fmt.Println("Unknown Theme",themestr,". Falling back to Dark Theme")
+				theme = nstyle.DarkTheme
+		}
+	}else{
+		theme = nstyle.DarkTheme
 	}
 	//hea,dat = loadfile(filename)
 

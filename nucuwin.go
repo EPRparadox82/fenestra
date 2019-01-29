@@ -3,7 +3,7 @@ package main
 import (
 	//"fmt"
 	"os"
-
+	"strings"
 
 	"github.com/aarzilli/nucular"
 	"github.com/aarzilli/nucular/label"
@@ -73,48 +73,59 @@ func (nw *fenestraWindow) masterWindow(w *nucular.Window) {
 	for _,d := range(dat) {
 		if d.title == "" {
 			for i,_ := range(d.textl){
+				triml := strings.TrimSpace(d.textl[i])
+				trimr := strings.TrimSpace(d.textr[i])
 				if d.textr[i]==""{
 					w.RowScaled(25).Dynamic(1)
-					w.Label(d.textl[i],"CC")
+					w.Label(triml,"CC")
 				}else if d.textl[i]==""{
 					w.RowScaled(20).Dynamic(2)
 					w.Label("*)", "RC")
-					w.Label(d.textr[i], "LC")
+					w.Label(trimr, "LC")
 				}else{
 					w.RowScaled(20).Dynamic(2)
-					w.Label(d.textl[i], "RC")
-					w.Label(d.textr[i], "LC")
+					w.Label(triml, "RC")
+					w.Label(trimr, "LC")
 				}
 			}
-		}else if w.TreePush(nucular.TreeTab, d.title, true) {
-			//w.RowScaled(20).Dynamic(2)
-			//w.Row(20).Dynamic(3)
-			//w.Row(20).Static(100)
-			for i,_ := range(d.textl){
-			//	w.Label(d.textl[i], "RC")
-			//	w.Label(d.textr[i], "LC")
-				//w.Label("", "LC")
-				if d.textr[i]==""{
-					w.RowScaled(25).Dynamic(1)
-					w.Label(d.textl[i],"CC")
-				}else if d.textl[i]==""{
-					w.RowScaled(20).Dynamic(2)
-					w.Label("*)", "RC")
-					w.Label(d.textr[i], "LC")
-				}else{
-					w.RowScaled(20).Dynamic(2)
-					w.Label(d.textl[i], "RC")
-					w.Label(d.textr[i], "LC")
-				}
+		}else{
+			trimt := strings.TrimSpace(d.title)
+			show := true
+			if string(trimt[len(trimt)-1])=="#" {
+				show = false
+				trimt = strings.Trim(trimt,"#")
 			}
+			if w.TreePush(nucular.TreeTab, trimt, show) {
+				//w.RowScaled(20).Dynamic(2)
+				//w.Row(20).Dynamic(3)
+				//w.Row(20).Static(100)
+				for i,_ := range(d.textl){
+					triml := strings.TrimSpace(d.textl[i])
+					trimr := strings.TrimSpace(d.textr[i])
+					if d.textr[i]==""{
+						w.RowScaled(25).Dynamic(1)
+						w.Label(triml,"CC")
+					}else if d.textl[i]==""{
+						w.RowScaled(20).Dynamic(2)
+						w.Label("*)", "RC")
+						w.Label(trimr, "LC")
+					}else{
+						w.RowScaled(20).Dynamic(2)
+						w.Label(triml, "RC")
+						w.Label(trimr, "LC")
+					}
+				}
 
-			w.TreePop()
+				w.TreePop()
+			}
 		}
 	}
 	w.RowScaled(30).Dynamic(3) //.Static(300, 100, 100)
 	w.Label("", "LC")
-	if w.ButtonText(exitbut) {
-		 os.Exit(0)
+	if countd==0 || countd >10 {
+		if w.ButtonText(exitbut) {
+			os.Exit(0)
+		}
 	}
 }
 

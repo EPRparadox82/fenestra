@@ -21,7 +21,8 @@ Lists			--
 			-- empty Infos
 As long as no Seperators are present text will be displayed in one Row
 
-##Some Unix Commands
+##Some Unix Commands#
+Categories with trailing # will be cloased at program start
 An example of what Fenestra is intended to show
 
 mkdir <name>		-- Make a Directory called <name>
