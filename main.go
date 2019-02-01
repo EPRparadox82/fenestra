@@ -45,7 +45,7 @@ func init() {
 	getopt.FlagLong(&menubar, "no-menu", 'm', "Dont Show Menu")
 	getopt.FlagLong(&scaling, "magnify", 'g', "Magnification level")
 	getopt.FlagLong(&countd, "count-down", 'd', "Set Count down in seconds for auto-quit")
-	getopt.FlagLong(&themestr, "color-theme", 'c', "Specify Theme")
+	getopt.FlagLong(&themestr, "color-theme", 'c', "Specify Theme: Dark, Red, White or Default")
 	getopt.FlagLong(&help, "help", 'h', "Show Program Usage")
 	getopt.FlagLong(&filename, "file", 'f', "The textfile to be parsed and displayed")
 	getopt.FlagLong(&exitbut, "quit-button", 'q', "Label of the Quit Button")
@@ -54,10 +54,7 @@ func init() {
 
 func main() {
 
-	//timer := time.NewTimer(time.Second*time.Duration(countd*1000))
-	//defer timer.Stop()
 	go func() {
-		//<-timer.C
 		time.Sleep(time.Duration(countd)*time.Second)
 		if countd>0 {
 			fmt.Println("Timer of",countd,"s has Ended")
@@ -137,7 +134,7 @@ func main() {
 
 }
 func showHelp() {
-	fmt.Printf("Usage of %s   Version %s:\n  A simple and Customizable Cheatsheet viewer.\n  When No Text is piped and no File specified the Parameters\n  will be shown as Text.\n\n", os.Args[0], version)
+	fmt.Printf("Usage of %s\n  Version %s  Compiled %s\n  A simple and Customizable Cheatsheet viewer.\n  When No Text is piped and no File specified\n  the Parameters will be shown as Text.\n\n", os.Args[0], version, compdate)
 
 	getopt.Usage()
 	os.Exit(0)
